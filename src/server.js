@@ -1,50 +1,32 @@
 import express from 'express';
 import cors from 'cors';
-import pino from 'pino-http';
 import 'dotenv/config';
+
+import { connectMongoDB } from './db/connectMongoDB.js';
+import { logger } from './middleware/logger.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import notesRoutes from './routes/notesRoutes.js';
 
 const PORT = process.env.PORT || 3000;
 
-const app = express();
+const startServer = async () => {
+  await connectMongoDB();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(pino());
+  const app = express();
 
-// Routes
-app.get('/notes', (req, res) => {
-  res.status(200).json({
-    message: 'Retrieved all notes',
+  app.use(logger);
+  app.use(express.json());
+  app.use(cors());
+
+  app.use(notesRoutes);
+
+  app.use(notFoundHandler);
+  app.use(errorHandler);
+
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
   });
-});
+};
 
-app.get('/notes/:noteId', (req, res) => {
-  const { noteId } = req.params;
-
-  res.status(200).json({
-    message: `Retrieved note with ID: ${noteId}`,
-  });
-});
-
-app.get('/test-error', () => {
-  throw new Error('Simulated server error');
-});
-
-// 404 handler — must be after all defined routes
-app.use((req, res) => {
-  res.status(404).json({
-    message: 'Route not found',
-  });
-});
-
-// Error handler — must have 4 arguments to be recognized by Express
-app.use((err, req, res, next) => {
-  res.status(500).json({
-    message: err.message,
-  });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+startServer();
