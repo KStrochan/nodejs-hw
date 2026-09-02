@@ -1,7 +1,7 @@
 {
   "name": "nodejs-hw",
   "version": "1.0.0",
-  "description": "Express + MongoDB app for working with a notes collection",
+  "description": "Express + MongoDB app with authentication, sessions and private notes",
   "main": "src/server.js",
   "type": "module",
   "scripts": {
@@ -12,6 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "celebrate": "^15.0.3",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

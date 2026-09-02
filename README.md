@@ -1,44 +1,42 @@
 # nodejs-hw
 
-Express + MongoDB (Mongoose) додаток для роботи з колекцією нотаток (HW07, гілка `02-mongodb`).
+Express + MongoDB додаток з авторизацією, сесіями та приватними колекціями нотаток (HW09, гілка `04-auth`).
 
 ## Запуск локально
 
-1. Створи кластер у [MongoDB Atlas](https://www.mongodb.com/atlas) і дозволь доступ з будь-якої IP-адреси (`0.0.0.0/0`) у Network Access.
-2. Скопіюй `.env.example` у `.env` і встав свій рядок підключення у `MONGO_URL`.
-3. Встанови залежності і запусти сервер:
+1. Скопіюй `.env.example` у `.env` і встав свій `MONGO_URL`.
+2. Встанови залежності та запусти сервер:
 
 ```bash
 npm install
 npm run dev
 ```
 
-При успішному підключенні в консолі зʼявиться:
+## Маршрути авторизації
 
-```
-✅ MongoDB connection established successfully
-```
+| Метод | Шлях             | Опис                                   |
+| ----- | ---------------- | --------------------------------------- |
+| POST  | `/auth/register` | реєстрація нового користувача           |
+| POST  | `/auth/login`    | логін, створює нову сесію               |
+| POST  | `/auth/refresh`  | оновлює сесію за refreshToken з cookies |
+| POST  | `/auth/logout`   | видаляє сесію, чистить cookies          |
 
-## Маршрути
+Кожен успішний `register`/`login`/`refresh` встановлює три httpOnly cookies: `accessToken` (15 хв), `refreshToken` та `sessionId` (1 день).
+
+## Маршрути нотаток (потребують авторизації)
+
+Усі маршрути `/notes` захищені middleware `authenticate` — потрібна валідна кука `accessToken`. Кожен користувач бачить і керує лише своїми нотатками.
 
 | Метод  | Шлях             | Опис                        |
 | ------ | ---------------- | --------------------------- |
-| GET    | `/notes`         | отримати всі нотатки        |
-| GET    | `/notes/:noteId` | отримати одну нотатку за ID |
+| GET    | `/notes`         | список своїх нотаток        |
+| GET    | `/notes/:noteId` | одна своя нотатка за ID     |
 | POST   | `/notes`         | створити нову нотатку       |
-| PATCH  | `/notes/:noteId` | оновити нотатку за ID       |
-| DELETE | `/notes/:noteId` | видалити нотатку за ID      |
-
-Будь-який неіснуючий маршрут повертає `404` з `{ "message": "Route not found" }`.
-Помилки на сервері повертають `{ "message": "<текст помилки>" }` з відповідним статусом.
-
-## Модель Note
-
-- `title` — обовʼязковий рядок
-- `content` — необовʼязковий рядок (за замовчуванням порожній)
-- `tag` — одне з: `Work, Personal, Meeting, Shopping, Ideas, Travel, Finance, Health, Important, Todo` (за замовчуванням `Todo`)
-- `createdAt`, `updatedAt` — додаються автоматично
+| PATCH  | `/notes/:noteId` | оновити свою нотатку        |
+| DELETE | `/notes/:noteId` | видалити свою нотатку       |
 
 ## Деплой
 
-Задеплоєно на [render.com](https://render.com). У налаштуваннях сервісу на Render обов'язково додай змінні оточення `PORT` та `MONGO_URL`.
+Задеплоєно на [render.com](https://render.com) з гілки `04-auth`. У налаштуваннях сервісу додай змінні оточення `PORT` та `MONGO_URL`.
+
+⚠️ Кукі використовують `secure: true` та `sameSite: 'none'`, тому працюють лише через HTTPS (Render надає HTTPS автоматично) — тестування auth-флоу з `localhost` через звичайний `http://` не спрацює коректно в браузері, тестуй через Postman або на задеплоєній версії.
