@@ -1,44 +1,32 @@
 # nodejs-hw
 
-Express + MongoDB (Mongoose) додаток для роботи з колекцією нотаток (HW07, гілка `02-mongodb`).
+Express + MongoDB додаток зі скиданням паролю через email та завантаженням аватара (HW10, гілка `05-mail-and-img`).
 
 ## Запуск локально
 
-1. Створи кластер у [MongoDB Atlas](https://www.mongodb.com/atlas) і дозволь доступ з будь-якої IP-адреси (`0.0.0.0/0`) у Network Access.
-2. Скопіюй `.env.example` у `.env` і встав свій рядок підключення у `MONGO_URL`.
-3. Встанови залежності і запусти сервер:
+1. Скопіюй `.env.example` у `.env`.
+2. Заповни `MONGO_URL` (як у попередніх ДЗ).
+3. Створи акаунт на [Brevo](https://www.brevo.com) (або [SendGrid](https://sendgrid.com) як альтернативу) і заповни `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`.
+4. Створи акаунт на [Cloudinary](https://cloudinary.com) і заповни `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`.
+5. Придумай будь-який рядок для `JWT_SECRET`.
+6. Встав адресу свого фронтенда (або будь-яку, наприклад `http://localhost:3001`) у `FRONTEND_DOMAIN`.
+7. Встанови залежності та запусти сервер:
 
 ```bash
 npm install
 npm run dev
 ```
 
-При успішному підключенні в консолі зʼявиться:
+## Нові маршрути
 
-```
-✅ MongoDB connection established successfully
-```
+| Метод | Шлях                        | Опис                                          |
+| ----- | --------------------------- | ---------------------------------------------- |
+| POST  | `/auth/request-reset-email` | надсилає лист зі скиданням паролю              |
+| POST  | `/auth/reset-password`      | скидає пароль за JWT-токеном з листа           |
+| PATCH | `/users/me/avatar`          | завантажує аватар (потребує авторизації)       |
 
-## Маршрути
-
-| Метод  | Шлях             | Опис                        |
-| ------ | ---------------- | --------------------------- |
-| GET    | `/notes`         | отримати всі нотатки        |
-| GET    | `/notes/:noteId` | отримати одну нотатку за ID |
-| POST   | `/notes`         | створити нову нотатку       |
-| PATCH  | `/notes/:noteId` | оновити нотатку за ID       |
-| DELETE | `/notes/:noteId` | видалити нотатку за ID      |
-
-Будь-який неіснуючий маршрут повертає `404` з `{ "message": "Route not found" }`.
-Помилки на сервері повертають `{ "message": "<текст помилки>" }` з відповідним статусом.
-
-## Модель Note
-
-- `title` — обовʼязковий рядок
-- `content` — необовʼязковий рядок (за замовчуванням порожній)
-- `tag` — одне з: `Work, Personal, Meeting, Shopping, Ideas, Travel, Finance, Health, Important, Todo` (за замовчуванням `Todo`)
-- `createdAt`, `updatedAt` — додаються автоматично
+`PATCH /users/me/avatar` очікує `multipart/form-data` з полем `avatar` (файл зображення, до 2MB).
 
 ## Деплой
 
-Задеплоєно на [render.com](https://render.com). У налаштуваннях сервісу на Render обов'язково додай змінні оточення `PORT` та `MONGO_URL`.
+Задеплоєно на [render.com](https://render.com) з гілки `05-mail-and-img`. У налаштуваннях сервісу додай **усі** змінні оточення з `.env.example`.
