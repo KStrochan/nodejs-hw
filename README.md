@@ -1,44 +1,88 @@
-# nodejs-hw
+# NoteHub API
 
-Express + MongoDB (Mongoose) додаток для роботи з колекцією нотаток (HW07, гілка `02-mongodb`).
+A REST API for a notes application built with Express and MongoDB (Mongoose). The project was developed step by step as part of the GoIT Full-Stack program, with each stage kept on its own branch.
 
-## Запуск локально
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)
+![Mongoose](https://img.shields.io/badge/Mongoose-880000?style=flat-square&logo=mongoose&logoColor=white)
+![Render](https://img.shields.io/badge/Deployed_on-Render-46E3B7?style=flat-square&logo=render&logoColor=white)
 
-1. Створи кластер у [MongoDB Atlas](https://www.mongodb.com/atlas) і дозволь доступ з будь-якої IP-адреси (`0.0.0.0/0`) у Network Access.
-2. Скопіюй `.env.example` у `.env` і встав свій рядок підключення у `MONGO_URL`.
-3. Встанови залежності і запусти сервер:
+## 🔗 Links
 
-```bash
-npm install
-npm run dev
-```
+- Live demo: https://kstrochan.github.io/nodejs-hw/
+- Author: [Konstantyn Strochan](https://github.com/KStrochan)
 
-При успішному підключенні в консолі зʼявиться:
+## ✨ Features
 
-```
-✅ MongoDB connection established successfully
-```
+- CRUD endpoints for a collection of notes stored in MongoDB.
+- Note model built with Mongoose: required title, optional content and a tag from a fixed list.
+- Automatic `createdAt` and `updatedAt` timestamps.
+- Centralized error handling: unknown routes return a JSON 404, server errors return a JSON message with the proper status.
+- Request logging with pino-http, CORS support and configuration through environment variables.
 
-## Маршрути
+## 🌿 Branches
 
-| Метод  | Шлях             | Опис                        |
-| ------ | ---------------- | --------------------------- |
-| GET    | `/notes`         | отримати всі нотатки        |
-| GET    | `/notes/:noteId` | отримати одну нотатку за ID |
-| POST   | `/notes`         | створити нову нотатку       |
-| PATCH  | `/notes/:noteId` | оновити нотатку за ID       |
-| DELETE | `/notes/:noteId` | видалити нотатку за ID      |
+Each homework stage lives in its own branch:
 
-Будь-який неіснуючий маршрут повертає `404` з `{ "message": "Route not found" }`.
-Помилки на сервері повертають `{ "message": "<текст помилки>" }` з відповідним статусом.
+- `01-express` – Express server basics.
+- `02-mongodb` (also `main`) – CRUD API for notes with MongoDB and Mongoose.
+- `03-validation` – request validation with celebrate (Joi).
+- `04-auth` – user registration and login, password hashing with bcrypt, session cookies and private notes.
+- `05-mail-and-img` – next iteration of the project (mail and image handling).
 
-## Модель Note
+## 📡 API Endpoints
 
-- `title` — обовʼязковий рядок
-- `content` — необовʼязковий рядок (за замовчуванням порожній)
-- `tag` — одне з: `Work, Personal, Meeting, Shopping, Ideas, Travel, Finance, Health, Important, Todo` (за замовчуванням `Todo`)
-- `createdAt`, `updatedAt` — додаються автоматично
+| Method | Path | Description |
+| ------ | ---- | ----------- |
+| GET | `/notes` | Get all notes |
+| GET | `/notes/:noteId` | Get a single note by ID |
+| POST | `/notes` | Create a new note |
+| PATCH | `/notes/:noteId` | Update a note by ID |
+| DELETE | `/notes/:noteId` | Delete a note by ID |
 
-## Деплой
+Any unknown route returns `404` with `{ "message": "Route not found" }`. Server errors return `{ "message": "<error text>" }` with the corresponding status code.
 
-Задеплоєно на [render.com](https://render.com). У налаштуваннях сервісу на Render обов'язково додай змінні оточення `PORT` та `MONGO_URL`.
+### Note model
+
+| Field | Type | Notes |
+| ----- | ---- | ----- |
+| `title` | String | Required |
+| `content` | String | Optional, empty string by default |
+| `tag` | String | One of: Work, Personal, Meeting, Shopping, Ideas, Travel, Finance, Health, Important, Todo (default: Todo) |
+| `createdAt`, `updatedAt` | Date | Added automatically |
+
+## 🛠️ Tech Stack
+
+- **Runtime and framework:** Node.js (ES modules), Express 4
+- **Database:** MongoDB Atlas, Mongoose
+- **Tooling:** pino-http, dotenv, http-errors, cors, ESLint, Prettier, nodemon
+- **Deployment:** Render
+
+## 🚀 Getting Started
+
+1. Create a MongoDB Atlas cluster and allow access from your IP address in **Network Access**.
+2. Clone the repository and install dependencies:
+
+   ```bash
+   git clone https://github.com/KStrochan/nodejs-hw.git
+   cd nodejs-hw
+   npm install
+   ```
+
+3. Copy `.env.example` to `.env` and set your connection string in `MONGO_URL`.
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+   After a successful connection the console prints `MongoDB connection established successfully`.
+
+## ☁️ Deployment
+
+The API is deployed on [Render](https://render.com/). Add the `PORT` and `MONGO_URL` environment variables in the service settings.
+
+## 👤 Author
+
+Konstantyn Strochan – Junior Full-Stack Developer. [LinkedIn](https://www.linkedin.com/in/konstantyn-strochan/) | [GitHub](https://github.com/KStrochan)
